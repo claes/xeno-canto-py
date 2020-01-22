@@ -78,6 +78,26 @@ def download(filt):
             request.urlretrieve(url, audio_path + audio_file)
         page += 1
 
+def queue_mpd(filt):
+    page = 1
+    page_num = 1
+
+    # Retrieve metadata to parse for download links
+    path = metadata(filt)
+    os.system("mpc clear")
+    while page < page_num + 1:
+        with open(path + '/page' + str(page) + ".json", 'r') as jsonfile:
+            data = jsonfile.read()
+        data = json.loads(data)
+        page_num = data['numPages']
+
+        # Pulling species name, track ID, and download link for naming and retrieval
+        for i in range(len((data['recordings']))):
+            url = 'http:' + data['recordings'][i]['file']
+            print(url)
+            os.system("mpc add " + url)
+        page += 1
+
 # Retrieve all files while ignoring those that are hidden
 def listdir_nohidden(path):
     for f in os.listdir(path):
@@ -221,7 +241,8 @@ if __name__ == '__main__':
 
     elif act == "-dl":
         download(params)
-
+    elif act == "-qmpd":
+        queue_mpd(params)
     elif act == "-p":
         purge(int(params[0]))
 
