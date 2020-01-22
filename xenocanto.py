@@ -97,6 +97,7 @@ def queue_mpd(filt):
             print(url)
             os.system("mpc add " + url)
         page += 1
+    os.system("mpc play")
 
 # Retrieve all files while ignoring those that are hidden
 def listdir_nohidden(path):
